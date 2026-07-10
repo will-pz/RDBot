@@ -30,6 +30,25 @@ class Roles(commands.Cog):
 
         await ctx.respond(f"{membre.mention} est maintenant citoyen.")
 
+    @commands.slash_command(description="Retire tous les rôles d'un utilisateur sauf ROLE_TOURISTE")
+    @commands.has_permissions(manage_roles=True)
+    async def kick(self, ctx, membre: discord.Member):
+        role_touriste = ctx.guild.get_role(ROLE_TOURISTE)
+
+        if role_touriste is None:
+            await ctx.respond("Rôle ROLE_TOURISTE introuvable sur ce serveur.", ephemeral=True)
+            return
+
+        roles_a_retirer = [r for r in membre.roles if r != ctx.guild.default_role and r != role_touriste]
+
+        if roles_a_retirer:
+            await membre.remove_roles(*roles_a_retirer, reason=f"/kick par {ctx.author}")
+
+        if role_touriste not in membre.roles:
+            await membre.add_roles(role_touriste, reason=f"/kick par {ctx.author}")
+
+        await ctx.respond(f"Tous les rôles de {membre.mention} ont été retirés (sauf ROLE_TOURISTE).")
+
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         role_touriste = member.guild.get_role(ROLE_TOURISTE)

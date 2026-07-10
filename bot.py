@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 import os
 import logging
+from config import TOKEN, GUILD_ID
 
-from config import TOKEN
+
 
 # Logging propre dès le départ
 logging.basicConfig(
@@ -17,7 +18,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents, debug_guilds=[GUILD_ID])
 
 
 @bot.event

@@ -239,22 +239,52 @@ class Annonces(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
-        await self._handle_reaction_change(payload)
+        vote_data = self._reaction_vote(payload)
+        if vote_data is None:
+            return
+
+        await self._enforce_single_choice(payload)
+        await self._safe_refresh(vote_data)
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
-        await self._handle_reaction_change(payload)
+        vote_data = self._reaction_vote(payload)
+        if vote_data is None:
+            return
 
-    async def _handle_reaction_change(self, payload: discord.RawReactionActionEvent):
+        await self._safe_refresh(vote_data)
+
+    def _reaction_vote(self, payload: discord.RawReactionActionEvent):
         if payload.user_id == self.bot.user.id:
-            return
+            return None
         if str(payload.emoji) not in (EMOJI_OUI, EMOJI_NON):
-            return
+            return None
 
         vote_data = self._find_vote_by_message(payload.message_id)
         if vote_data is None or vote_data["closed"]:
+            return None
+        return vote_data
+
+    async def _enforce_single_choice(self, payload: discord.RawReactionActionEvent):
+        # Empêche de voter Oui et Non en même temps : la nouvelle réaction chasse l'autre.
+        if payload.member is None:
             return
 
+        autre_emoji = EMOJI_NON if str(payload.emoji) == EMOJI_OUI else EMOJI_OUI
+
+        channel = self.bot.get_channel(payload.channel_id)
+        if channel is None:
+            try:
+                channel = await self.bot.fetch_channel(payload.channel_id)
+            except discord.HTTPException:
+                return
+
+        try:
+            await channel.get_partial_message(payload.message_id).remove_reaction(autre_emoji, payload.member)
+        except discord.HTTPException:
+            pass
+
+    async def _safe_refresh(self, vote_data: dict):
         try:
             await self._refresh_vote_message(vote_data)
         except discord.HTTPException:

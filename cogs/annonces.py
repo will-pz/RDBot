@@ -25,7 +25,7 @@ class Annonces(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def annonce(self, ctx, titre: str, message: str):
         embed = discord.Embed(title=titre, description=message, color=COLOR_ANNONCE)
-        embed.set_author(name="République Dominicaine · Annonce", icon_url=self._icon_url(ctx))
+        embed.set_author(name="République Dominicaine · Annonce", icon_url=ctx.author.display_avatar.url)
         embed.add_field(name="Publié par", value=ctx.author.mention, inline=False)
         self._footer(embed, ctx)
         await ctx.respond(embed=embed)
@@ -38,7 +38,7 @@ class Annonces(commands.Cog):
             description=message,
             color=COLOR_GUERRE,
         )
-        embed.set_author(name="République Dominicaine · Ministère de la Défense", icon_url=self._icon_url(ctx))
+        embed.set_author(name="République Dominicaine · Ministère de la Défense", icon_url=ctx.author.display_avatar.url)
         embed.add_field(name="Pays adverse", value=pays_ennemi, inline=True)
         embed.add_field(name="Casus belli", value=raison, inline=True)
         embed.add_field(name="Date d'effet", value=datetime.now().strftime("%d/%m/%Y"), inline=True)
@@ -54,7 +54,7 @@ class Annonces(commands.Cog):
             description=message,
             color=COLOR_PAIX,
         )
-        embed.set_author(name="République Dominicaine · Ministère de la Défense", icon_url=self._icon_url(ctx))
+        embed.set_author(name="République Dominicaine · Ministère de la Défense", icon_url=ctx.author.display_avatar.url)
         embed.add_field(name="Pays concerné", value=pays_ennemi, inline=True)
         embed.add_field(name="Date d'effet", value=datetime.now().strftime("%d/%m/%Y"), inline=True)
         embed.add_field(name="Ordonné par", value=ctx.author.mention, inline=True)
@@ -74,7 +74,7 @@ class Annonces(commands.Cog):
     ):
         date_fin = datetime.now() + timedelta(hours=duree_heures)
         embed = discord.Embed(title=f"🗳️ {titre}", description=message, color=COLOR_VOTE)
-        embed.set_author(name="République Dominicaine · Vote", icon_url=self._icon_url(ctx))
+        embed.set_author(name="République Dominicaine · Vote", icon_url=ctx.author.display_avatar.url)
         embed.add_field(name=f"✅ {option_1}", value="0 vote", inline=True)
         embed.add_field(name=f"❌ {option_2}", value="0 vote", inline=True)
         embed.add_field(

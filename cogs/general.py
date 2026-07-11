@@ -19,13 +19,6 @@ class General(commands.Cog):
         embed.add_field(name="Créé le", value=guild.created_at.strftime("%d/%m/%Y"))
         await ctx.respond(embed=embed)
 
-    @commands.slash_command(description="Envoie une annonce sous forme d'embed")
-    @commands.has_permissions(manage_messages=True)
-    async def annonce(self, ctx, message: str):
-        embed = discord.Embed(description=message, color=discord.Color.blue())
-        embed.set_footer(text="Annonce : République Dominicaine")
-        await ctx.respond(embed=embed)
-
 
 def setup(bot):
     bot.add_cog(General(bot))

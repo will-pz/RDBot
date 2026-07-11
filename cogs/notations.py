@@ -125,7 +125,7 @@ class Notations(commands.Cog):
         if week is not None:
             params["week"] = week
 
-        headers = {"Authorization": NG_API_KEY}
+        headers = {"Authorization": f"Bearer {NG_API_KEY}"}
 
         try:
             async with aiohttp.ClientSession(timeout=NG_TIMEOUT) as session:

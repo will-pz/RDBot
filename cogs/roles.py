@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 import logging
 
 from config import ROLE_CITOYEN, ROLE_TOURISTE
+from logs import log
 
 logger = logging.getLogger("RDBot")
 
@@ -29,6 +30,7 @@ class Roles(commands.Cog):
         await membre.remove_roles(role_touriste, reason=f"/joinrecrue par {ctx.author}")
 
         await ctx.respond(f"{membre.mention} est maintenant citoyen.")
+        await log(self.bot, "/joinrecrue", ctx.author, membre.mention)
 
     @commands.slash_command(description="Retire tous les rôles d'un utilisateur sauf ROLE_TOURISTE")
     @commands.has_permissions(manage_roles=True)
@@ -48,6 +50,7 @@ class Roles(commands.Cog):
             await membre.add_roles(role_touriste, reason=f"/kick par {ctx.author}")
 
         await ctx.respond(f"Tous les rôles de {membre.mention} ont été retirés (sauf ROLE_TOURISTE).")
+        await log(self.bot, "/kick", ctx.author, membre.mention)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
